@@ -1,4 +1,5 @@
 ﻿using System;
+using Entidades;
 
 namespace Main
 {
@@ -6,7 +7,7 @@ namespace Main
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Personaje personaje = new Personaje();
         }
     }
 }
