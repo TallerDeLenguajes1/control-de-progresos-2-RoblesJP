@@ -6,10 +6,16 @@ namespace Entidades
 {
     public class Personaje
     {
-        private Caracteristicas caracteristicas = new Caracteristicas();
-        private Datos datos = new Datos();
+        private Datos datos;
+        private Caracteristicas caracteristicas;
 
-        public Caracteristicas Caracteristicas { get => caracteristicas; set => caracteristicas = value; }
         public Datos Datos { get => datos; set => datos = value; }
+        public Caracteristicas Caracteristicas { get => caracteristicas; set => caracteristicas = value; }
+
+        public Personaje(Datos datos, Caracteristicas caracteristicas)
+        {
+            Datos = datos;
+            Caracteristicas = caracteristicas;
+        }
     }
 }
