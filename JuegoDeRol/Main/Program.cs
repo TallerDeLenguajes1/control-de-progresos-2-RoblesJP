@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Entidades;
 
 namespace Main
@@ -35,37 +36,44 @@ namespace Main
         static void Main(string[] args)
         {
             Random rnd = new Random();
-            Personaje personaje = new Personaje();
+            Caracteristicas caracteristicas;
+            Datos datos;
+            Personaje personaje;
+            List<Personaje> personajes = new List<Personaje>();
+            int indiceNombre; // indice para obtener valor aleatorio del enum
+            int indiceApodo;
+            int indiceTipos;
+            int cantPersonajes = 6;
 
             // creacion aleatoria de un personaje
-            // -datos
-            // --nombre
-            int indiceNombre = rnd.Next(Enum.GetNames(typeof(Nombres)).Length); // indice para obtener valor aleatorio del enum
-            personaje.Datos.Nombre = Convert.ToString((Nombres)indiceNombre);
-            // --apodo
-            int indiceApodo = rnd.Next(Enum.GetNames(typeof(Apodos)).Length); 
-            personaje.Datos.Apodo = Convert.ToString((Apodos)indiceApodo);
-            // --tipo
-            int indiceTipos = rnd.Next(Enum.GetNames(typeof(Tipos)).Length);
-            personaje.Datos.Tipo = Convert.ToString((Tipos)indiceTipos);
-            // --salud
-            personaje.Datos.Salud = rnd.Next(101);
-            // --nacimiento
-            DateTime comienzo = new DateTime(1200, 1, 1);
-            DateTime final = new DateTime(1500, 12, 31);
-            personaje.Datos.Nacimiento = FechaAleatoria(comienzo, final); // todos nacen a las 12AM
+            for (int i = 0; i < cantPersonajes; i++)
+            {
+                // datos
+                indiceNombre = rnd.Next(Enum.GetNames(typeof(Nombres)).Length);
+                indiceApodo = rnd.Next(Enum.GetNames(typeof(Apodos)).Length);
+                indiceTipos = rnd.Next(Enum.GetNames(typeof(Tipos)).Length);
+                DateTime comienzo = new DateTime(1200, 1, 1);
+                DateTime final = new DateTime(1500, 12, 31);
+                datos = new Datos(
+                                    Convert.ToString((Nombres)indiceNombre),    // nombre
+                                    Convert.ToString((Apodos)indiceApodo),      // apodo
+                                    Convert.ToString((Tipos)indiceTipos),       // tipo
+                                    FechaAleatoria(comienzo, final),            // nacimiento (todos nacen a las 12AM)
+                                    rnd.Next(101)                               // salud
+                    );
 
-            // -caracteristicas
-            // --nivel
-            personaje.Caracteristicas.Nivel = rnd.Next(10) + 1;
-            // --velocidad
-            personaje.Caracteristicas.Velocidad = rnd.Next(10) + 1;
-            // --destreza
-            personaje.Caracteristicas.Destreza = rnd.Next(5) + 1;
-            // --fuerza
-            personaje.Caracteristicas.Fuerza = rnd.Next(10) + 1;
-            // --armadura
-            personaje.Caracteristicas.Armadura = rnd.Next(10) + 1;
+                // caracteristicas
+                caracteristicas = new Caracteristicas(
+                                    rnd.Next(10) + 1,                           // nivel
+                                    rnd.Next(10) + 1,                           // fuerza
+                                    rnd.Next(10) + 1,                           // velocidad
+                                    rnd.Next(5) + 1,                            // destreza
+                                    rnd.Next(10) + 1                            // armadura
+                    );
+
+                personaje = new Personaje(datos, caracteristicas);
+                personajes.Add(personaje);
+            }
         }
 
         static DateTime FechaAleatoria(DateTime comienzo, DateTime final)
