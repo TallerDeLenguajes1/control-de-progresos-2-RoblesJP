@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Entidades;
+using ConsoleTables;
+using System.Globalization;
 
 namespace Main
 {
@@ -9,29 +11,50 @@ namespace Main
         static void Main(string[] args)
         {
             Random rnd = new Random();
+            int cantPersonajes = 5;
+            List<Personaje> personajes = cargarPersonajes(cantPersonajes); // lista que contiene a todos los personajes
+            mostrarPersonajes(personajes); 
+        }
+
+        static DateTime FechaAleatoria(DateTime comienzo, DateTime final)
+        {
+            Random rnd = new Random();
+            int rango = (final - comienzo).Days;
+            return comienzo.AddDays(rnd.Next(rango));
+        }
+
+        static List<Personaje> cargarPersonajes(int cant)
+        {
+            List<Personaje> personajes = new List<Personaje>();
+            Random rnd = new Random();
             Caracteristicas caracteristicas;
             Datos datos;
             Personaje personaje;
-            List<Personaje> personajes = new List<Personaje>(); // lista que contiene a todos los personajes
             int indiceNombre; // indice para obtener valor aleatorio del enum
             int indiceApodo;
             int indiceTipos;
-            int cantPersonajes = 6;
+            DateTime final;
+            DateTime comienzo;
+            DateTime fechaNacimieno;
 
-            // creacion aleatoria de un personaje
-            for (int i = 0; i < cantPersonajes; i++)
+            for (int i = 0; i < cant; i++)
             {
                 // datos
                 indiceNombre = i;
                 indiceApodo = i;
                 indiceTipos = rnd.Next(Enum.GetNames(typeof(Tipos)).Length);
-                DateTime comienzo = new DateTime(1200, 1, 1);
-                DateTime final = new DateTime(1500, 12, 31);
+                final = DateTime.Now;
+                comienzo = final.AddYears(-300);
+                do
+                {
+                    fechaNacimieno = FechaAleatoria(comienzo, final);
+                } while ((final.Year - fechaNacimieno.Year) < 50);  // Los personajes tendran entre 50 y 300 años
+
                 datos = new Datos(
                                     Convert.ToString((Nombres)indiceNombre),            // nombre
                                     Convert.ToString((Apodos)indiceApodo),              // apodo
                                     Convert.ToString((Tipos)indiceTipos),               // tipo
-                                    FechaAleatoria(comienzo, final),                    // nacimiento (todos nacen a las 12AM)
+                                    fechaNacimieno,                                     // nacimiento (todos nacen a la misma hora)
                                     rnd.Next(101)                                       // salud
                     );
 
@@ -47,13 +70,45 @@ namespace Main
                 personaje = new Personaje(datos, caracteristicas);
                 personajes.Add(personaje);
             }
+            return personajes;
         }
 
-        static DateTime FechaAleatoria(DateTime comienzo, DateTime final)
+        static void mostrarPersonajes(List<Personaje> Lista)
         {
-            Random rnd = new Random();
-            int rango = (final - comienzo).Days;
-            return comienzo.AddDays(rnd.Next(rango));
+            var cultura = CultureInfo.CreateSpecificCulture("es-ES");
+
+            ConsoleTable tabla = new ConsoleTable(
+                "Nombre",
+                "Apodo",
+                "Tipo",
+                "Nacimiento",
+                "Edad",
+                "Salud",
+                "Nivel",
+                "Fuerza",
+                "Velocidad",
+                "Destreza",
+                "Armadura"
+                );
+
+            foreach (Personaje personaje in Lista)
+            {
+                tabla.AddRow(
+                    personaje.Datos.Nombre,
+                    personaje.Datos.Apodo,
+                    personaje.Datos.Tipo,
+                    personaje.Datos.Nacimiento.Date.ToString("d", cultura),
+                    personaje.Datos.Edad(),
+                    personaje.Datos.Salud,
+                    personaje.Caracteristicas.Nivel,
+                    personaje.Caracteristicas.Fuerza,
+                    personaje.Caracteristicas.Velocidad,
+                    personaje.Caracteristicas.Destreza,
+                    personaje.Caracteristicas.Armadura
+                    );
+            }
+
+            tabla.Write();
         }
     }
 }
