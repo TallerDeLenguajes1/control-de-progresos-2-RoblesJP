@@ -27,9 +27,9 @@ namespace Entidades
             Salud = salud;
         }
 
-        public int Edad(DateTime fecha)
+        public int Edad()
         {
-            int edad = fecha.Year - Nacimiento.Year;
+            int edad = DateTime.Now.Year - Nacimiento.Year;
             return edad;
         }
     }
