@@ -6,11 +6,11 @@ namespace Entidades
 {
     public enum Nombres
     {
-        Jorge = 0,
-        Miguel = 1,
-        Pedro = 2,
-        Vanessa = 3,
-        Mai = 4,
+        Aegon = 0,
+        Aenys = 1,
+        Maegor = 2,
+        Jaehaerys = 3,
+        Daeron = 4,
     }
 
     public enum Apodos // https://www.fantasynamegenerators.com/warrior-nicknames.php
