@@ -42,16 +42,37 @@ namespace Entidades
 
     public class Personaje
     {
+        // campos
         private Datos datos;
         private Caracteristicas caracteristicas;
 
+        // propiedades
         public Datos Datos { get => datos; set => datos = value; }
         public Caracteristicas Caracteristicas { get => caracteristicas; set => caracteristicas = value; }
 
+        // constructor
         public Personaje(Datos datos, Caracteristicas caracteristicas)
         {
             Datos = datos;
             Caracteristicas = caracteristicas;
+        }
+
+        // accion atacar
+        public void Atacar(Personaje defensor)
+        {
+            Random rnd = new Random();
+            // atacante
+            float poderDisparo = Caracteristicas.Destreza * Caracteristicas.Fuerza * Caracteristicas.Nivel;
+            float efectividadDisparo = (rnd.Next(100) + 1);
+            float valorAtaque = poderDisparo * efectividadDisparo;
+
+            // defensor
+            float valorDefensa = defensor.Caracteristicas.Armadura * defensor.Caracteristicas.Velocidad;
+
+            // resultado
+            float maximoDañoProvocado = 50000;
+            float dañoProvocado = ((valorAtaque * efectividadDisparo - valorDefensa) / maximoDañoProvocado) * 100;
+            defensor.Datos.Salud -= (int )dañoProvocado;
         }
     }
 }
