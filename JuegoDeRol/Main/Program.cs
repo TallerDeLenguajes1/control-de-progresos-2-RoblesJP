@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Entidades;
 using ConsoleTables;
 using System.Globalization;
+using System.Xml.Serialization;
 
 namespace Main
 {
@@ -13,7 +14,9 @@ namespace Main
             Random rnd = new Random();
             int cantPersonajes = 5;
             List<Personaje> personajes = cargarPersonajes(cantPersonajes); // lista que contiene a todos los personajes
-            mostrarPersonajes(personajes); 
+            mostrarPersonajes(personajes);
+            Personaje reyDeLosSieteReinos = Batalla(personajes);
+            Console.WriteLine("\nEl Rey de los Siete Reinos es {0} \'{1}\'", reyDeLosSieteReinos.Datos.Nombre, reyDeLosSieteReinos.Datos.Apodo);
         }
 
         static DateTime FechaAleatoria(DateTime comienzo, DateTime final)
@@ -73,42 +76,82 @@ namespace Main
             return personajes;
         }
 
-        static void mostrarPersonajes(List<Personaje> Lista)
+        static void mostrarPersonajes(List<Personaje> lista)
         {
             var cultura = CultureInfo.CreateSpecificCulture("es-ES");
 
             ConsoleTable tabla = new ConsoleTable(
-                "Nombre",
-                "Apodo",
-                "Tipo",
-                "Nacimiento",
-                "Edad",
-                "Salud",
-                "Nivel",
-                "Fuerza",
-                "Velocidad",
-                "Destreza",
-                "Armadura"
+                                    "Nombre",
+                                    "Apodo",
+                                    "Tipo",
+                                    "Nacimiento",
+                                    "Edad",
+                                    "Salud",
+                                    "Nivel",
+                                    "Fuerza",
+                                    "Velocidad",
+                                    "Destreza",
+                                    "Armadura"
                 );
 
-            foreach (Personaje personaje in Lista)
+            foreach (Personaje personaje in lista)
             {
                 tabla.AddRow(
-                    personaje.Datos.Nombre,
-                    personaje.Datos.Apodo,
-                    personaje.Datos.Tipo,
-                    personaje.Datos.Nacimiento.Date.ToString("d", cultura),
-                    personaje.Datos.Edad(),
-                    personaje.Datos.Salud,
-                    personaje.Caracteristicas.Nivel,
-                    personaje.Caracteristicas.Fuerza,
-                    personaje.Caracteristicas.Velocidad,
-                    personaje.Caracteristicas.Destreza,
-                    personaje.Caracteristicas.Armadura
+                                    personaje.Datos.Nombre,
+                                    personaje.Datos.Apodo,
+                                    personaje.Datos.Tipo,
+                                    personaje.Datos.Nacimiento.Date.ToString("d", cultura),
+                                    personaje.Datos.Edad(),
+                                    personaje.Datos.Salud,
+                                    personaje.Caracteristicas.Nivel,
+                                    personaje.Caracteristicas.Fuerza,
+                                    personaje.Caracteristicas.Velocidad,
+                                    personaje.Caracteristicas.Destreza,
+                                    personaje.Caracteristicas.Armadura
                     );
             }
 
             tabla.Write();
+        }
+
+        static Personaje[] Combate(Personaje personajeA, Personaje personajeB)
+        {
+            Personaje[] resultado = new Personaje[2];
+
+            for (int i = 0; i < 3; i++)
+            {
+                personajeA.Atacar(personajeB);
+                if (personajeB.Datos.Salud <= 0)
+                {
+                    personajeA.Datos.Salud += +10;
+                    resultado[0] = personajeA;
+                    resultado[1] = personajeB;
+                    break;
+                }
+
+                personajeB.Atacar(personajeA);
+                if (personajeA.Datos.Salud <= 0)
+                {
+                    personajeB.Datos.Salud += +10;
+                    resultado[0] = personajeB;
+                    resultado[1] = personajeA;
+                    break;
+                }
+            }
+
+            return resultado;
+        }
+
+        static Personaje Batalla(List<Personaje> lista)
+        {
+            Personaje[] resultadoCombate = null;
+            while (lista.Count > 1)
+            {
+                resultadoCombate = Combate(lista[0], lista[1]);
+                lista.Remove(resultadoCombate[1]);
+            }
+
+            return lista[0];
         }
     }
 }
